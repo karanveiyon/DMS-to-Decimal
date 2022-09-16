@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<title>உலகளந்தான் கோல்</title>
+<link rel="shortcut icon" href="./image/My project-1.png" type="image/x-icon">
+<style>
+@font-face {font-family: vt323;src: url(./fonts/VT323-Regular.ttf);}
+@font-face {font-family: tam;src: url(./fonts/MuktaMalar-SemiBold.ttf);}
+body{padding: 0%; margin: 0%; box-sizing: border-box; display: flex; flex-direction: column; min-height: 100vh; background-color:#0B8988;}
+.box{margin: auto; width: fit-content; align-content:center ; justify-content: center;background-color:#CBC8C0 ;}
+.menubar{padding: 1rem;  align-items: center; display: block; background-color: #000082; padding: 2px; color: wheat; font-family: vt323;}
+#title{ margin-right: 2px;}
+#close{  float:right; text-align: center; color: black; font-weight: bold; background-color: #C3C3C3;padding-left: 1.5px; padding-right: 1.5px;}
+.content{ padding: 1rem; margin: 1rem; }
+.lable{text-align: left;}
+input{border-style: inset;}
+.theading{text-align: left;}
+.drop{width: 100%; font-family: vt323; border: outset 2px black;}
+.table{font-family: vt323; width: 100%;}
+.button{ align-content:space-around; font-size: 110%; display: flex; flex-direction: row; justify-content: center; align-items: center; }
+#btn{font-family: vt323;width: 100%; border: outset; background-color: #C3C3C3;}
+#reset{font-family: vt323;width: 100%;border: outset; background-color: #C3C3C3;}
+#ans{font-family: vt323;}
+</style>
+</head>
+<body>
+<div class="box">
+<div class="menubar"><span id="title">DMS to Decimal Convertor</span> <span id="close">X</span></div>
+<fieldset class="content">
+<legend style="font-family: tam;">உலகளந்தான் கோல்</legend>
+<p style="font-weight:bold; font-size:medium; font-family: vt323;">Enter the Latitude and Longitude in DMS type <br>(note: value should not start and end with space)</p>
+<table class="table">
+<tbody>
+    <form action="">
+<tr><th class="theading"><label for="latitude" class="lable">Latitude: </label></th><td><input type="text" id="lat"></td>
+<td><select class="drop" name="latitude" id="latitude"> 
+<option value="N">North</option>
+<option value="S">South</option>
+</select></td></tr>
+<tr><th class="theading"><label for="Longitude" class="lable">Longitude:</label></th><td> <input type="text" id="long"></td>
+<td><select class="drop" name="longitude" id="longitude"> 
+<option value="E">East</option>
+<option value="W">West</option>
+</select></td></tr>
+<tr><th></th><td><button class="button" type="button" id="btn"><img src="./image/My project-2.png" alt="" srcset="" height="25px" width="25px"> Convert</button></td>
+    <td><button type="reset" class="button" id="reset"><img src="./image/My project-1.png" alt="" srcset="" height="25px" width="25px"> Reset</button></td></tr>
+</form></tbody>
+</table>
+<div class="answer" style="font-weight:bold; font-size:medium;">
+<p style="font-family: vt323;">The Value in Decimal:</p>
+<p id="ans"></p>
+</div>
+</fieldset>
+<br>
+</div>
+<script>
+document.getElementById("btn").onclick = function ()
+{
+var lats = document.getElementById("lat").value;
+var lat = lats.split(" ");
+var hr = parseInt(lat[0].split("°"));
+var mins = parseFloat(lat[1].split("'"));
+var min = mins/60;
+var secs = parseFloat(lat[2].split("''"));
+var sec = secs/3600;
+var decimal1 = parseFloat(hr+min+sec);
+/* document.getElementById("ans").innerHTML = "hr: "+lat[0]+" "+"mins: "+lat[1]+" "+"Secs: "+lat[2]+"In decimal: "+decimal; */
+console.log(decimal1);
+
+var longs = document.getElementById("long").value;
+var long = longs.split(" ");
+var lohr = parseInt(long[0].split("°"));
+var lomins = parseFloat(long[1].split("'"));
+var lomin = lomins/60;
+var losecs = parseFloat(long[2].split("''"));
+var losec = losecs/3600;
+var decimal2 = parseFloat(lohr+lomin+losec);
+/* document.getElementById("ans").innerHTML = "hr: "+long[0]+" "+"mins: "+long[1]+" "+"Secs: "+long[2]+"In decimal: "+decimal; */
+console.log(decimal2);
+var latitude = document.getElementById("latitude").value;
+var longitude = document.getElementById("longitude").value;
+console.log(latitude,longitude);
+if(latitude == "N" && longitude == "E")
+{
+document.getElementById("ans").innerHTML = "latitude: "+decimal1+" "+"Longitude: "+decimal2;
+/*     var answer = "latitude: "+decimal1+" "+"Longitude: "+decimal2;
+alert(answer); */
+}
+else if (latitude == "S" && longitude == "E")
+{
+var latdecimal = "-"+decimal1;
+document.getElementById("ans").innerHTML = "latitude: "+latdecimal+" "+"Longitude: "+decimal2;
+}
+else if (latitude == "N" && longitude == "W")
+{
+var longdecimal = "-"+decimal2;
+document.getElementById("ans").innerHTML = "latitude: "+decimal1+" "+"Longitude: "+longdecimal;
+}
+else if (latitude == "S" && longitude == "W")
+{
+var longdecimal = "-"+decimal2;
+var latdecimal = "-"+decimal1;
+document.getElementById("ans").innerHTML = "latitude: "+latdecimal+" "+"Longitude: "+longdecimal;
+}
+
+}
+</script>
+</body>
+</html>
