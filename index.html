@@ -33,6 +33,7 @@ input{border-style: inset;}
 <legend style="font-family: tam;">உலகளந்தான் கோல்</legend>
 <p style="font-weight:bold; font-size:medium; font-family: vt323;">Enter the Latitude and Longitude in DMS type <br>(note: value should not start and end with space)</p>
 <table class="table">
+    <thead><tr><th class="theading">Name:</th><td><input id="name"></td></tr></thead>
 <tbody>
     <form action="">
 <tr><th class="theading"><label for="latitude" class="lable">Latitude: </label></th><td><input type="text" id="lat"></td>
@@ -50,7 +51,8 @@ input{border-style: inset;}
 </form></tbody>
 </table>
 <div class="answer" style="font-weight:bold; font-size:medium;">
-<p style="font-family: vt323;">The Value in Decimal:</p>
+<p style="font-family: vt323;">The Value in Decimal: <button id="copy"><img src="./image/copy.png" width="16px" height="16px"></button></p>
+<p style="font-family: vt323;">name,lat,long,type</p>
 <p id="ans"></p>
 </div>
 </fieldset>
@@ -69,7 +71,7 @@ var sec = secs/3600;
 var decimal1 = parseFloat(hr+min+sec);
 /* document.getElementById("ans").innerHTML = "hr: "+lat[0]+" "+"mins: "+lat[1]+" "+"Secs: "+lat[2]+"In decimal: "+decimal; */
 console.log(decimal1);
-
+var name = document.getElementById("name").value;
 var longs = document.getElementById("long").value;
 var long = longs.split(" ");
 var lohr = parseInt(long[0].split("°"));
@@ -85,28 +87,34 @@ var longitude = document.getElementById("longitude").value;
 console.log(latitude,longitude);
 if(latitude == "N" && longitude == "E")
 {
-document.getElementById("ans").innerHTML = "latitude: "+decimal1+" "+"Longitude: "+decimal2;
+document.getElementById("ans").innerHTML = name+","+decimal1+","+decimal2;
 /*     var answer = "latitude: "+decimal1+" "+"Longitude: "+decimal2;
 alert(answer); */
 }
 else if (latitude == "S" && longitude == "E")
 {
 var latdecimal = "-"+decimal1;
-document.getElementById("ans").innerHTML = "latitude: "+latdecimal+" "+"Longitude: "+decimal2;
+document.getElementById("ans").innerHTML = name+","+latdecimal+","+decimal2;
 }
 else if (latitude == "N" && longitude == "W")
 {
 var longdecimal = "-"+decimal2;
-document.getElementById("ans").innerHTML = "latitude: "+decimal1+" "+"Longitude: "+longdecimal;
+document.getElementById("ans").innerHTML = name+","+decimal1+","+longdecimal;
 }
 else if (latitude == "S" && longitude == "W")
 {
 var longdecimal = "-"+decimal2;
 var latdecimal = "-"+decimal1;
-document.getElementById("ans").innerHTML = "latitude: "+latdecimal+" "+"Longitude: "+longdecimal;
+document.getElementById("ans").innerHTML = name+","+latdecimal+","+longdecimal;
 }
 
 }
+
+document.getElementById("copy").onclick = function () {
+  var copyText = document.getElementById("ans").innerText;
+  navigator.clipboard.writeText(copyText);
+/*   alert(copyText); */
+  }
 </script>
 </body>
 </html>
