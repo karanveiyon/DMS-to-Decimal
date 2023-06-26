@@ -9,8 +9,13 @@
 <style>
 @font-face {font-family: vt323;src: url(./fonts/VT323-Regular.ttf);}
 @font-face {font-family: tam;src: url(./fonts/MuktaMalar-SemiBold.ttf);}
-body{padding: 0%; margin: 0%; box-sizing: border-box; display: flex; flex-direction: column; min-height: 100vh; background-color:#0B8988;}
-.box{margin: auto; width: fit-content; align-content:center ; justify-content: center;background-color:#CBC8C0 ;}
+body{padding: 0%; margin: 0%; box-sizing: border-box; display: flex; flex-direction: row; min-height: 100vh; background-color:#0B8988; justify-content: space-evenly;}
+.main_container{display: flex; flex-direction: row;}
+@media (max-width: 768px) { body {
+.main_container{display: flex; flex-direction: column;}
+ /*    .box{margin: .5rem; width: 90%; align-content:center ; justify-content: center;background-color:#CBC8C0 ; font-family: vt323;} */
+}}
+.box{margin: auto 5rem; width: fit-content; align-content:center ; justify-content: center;background-color:#CBC8C0 ; font-family: vt323;}
 .menubar{padding: 1rem;  align-items: center; display: block; background-color: #000082; padding: 2px; color: wheat; font-family: vt323;}
 #title{ margin-right: 2px;}
 #close{  float:right; text-align: center; color: black; font-weight: bold; background-color: #C3C3C3;padding-left: 1.5px; padding-right: 1.5px;}
@@ -27,6 +32,7 @@ input{border-style: inset;}
 </style>
 </head>
 <body>
+<div class="main_container">
 <div class="box">
 <div class="menubar"><span id="title">DMS to Decimal Convertor</span> <span id="close">X</span></div>
 <fieldset class="content">
@@ -57,6 +63,42 @@ input{border-style: inset;}
 </div>
 </fieldset>
 <br>
+</div>
+
+<div class="box">
+  <div class="menubar"><span id="title">உலகளந்தான் கோல்</span> <span id="close">X</span></div>
+  <fieldset class="content">
+  <legend style="font-family: tam;">உலகளந்தான் கோல்</legend>
+  <p style="font-weight:bold; font-size:medium; font-family: vt323;">You can get all geo cordinate data here <br>(note: value should not start and end with space)</p>
+  <div class="current_location">
+  <button id="get_location">Get Current Location</button><br />
+  <span id="current_latitude"></span><br />
+  <span id="current_longitude"></span><br />
+  <span id="current_location_name"></span>
+  </div>
+  <div class="get_location_name">
+  <input type="text" id="current_lat_long" /><button id="get_location_name">
+  Get Location Name</button
+  ><br />
+  <span id="location_name"></span>
+  </div>
+  <br />
+  <div class="get_geo_cordinate">
+  <input type="text" id="place_name" /><button id="get_geo_cordinate">
+  Get Geo Cordinates</button
+  ><br />
+  <span id="location_geo_code"> </span>
+  </div><br> <br>
+  <div class="get_distance">
+  <input type="text" id="palce_1">
+  <input type="text" id="palce_2">
+  <button id="get_distance_btn">Get Distance</button><br>
+  <p id="distance"></p>
+  </div>
+  </fieldset>
+  <br>
+  </div>
+
 </div>
 <script>
 document.getElementById("btn").onclick = function ()
@@ -115,6 +157,140 @@ document.getElementById("copy").onclick = function () {
   navigator.clipboard.writeText(copyText);
 /*   alert(copyText); */
   }
+
+/* box-2 */
+var get_location = document.getElementById("get_location");
+      var get_location_name = document.getElementById("get_location_name");
+      var current_location_name = document.getElementById("current_location_name");
+      var get_geo_cordinate = document.getElementById("get_geo_cordinate");
+      var get_distance_btn = document.getElementById("get_distance_btn");
+
+      get_location.onclick = fetch_current_location;
+      const Http = new XMLHttpRequest();
+      function fetch_current_location() {
+        var bdcApi = "https://api.bigdatacloud.net/data/reverse-geocode-client";
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+            var current_latitude = document.getElementById("current_latitude");
+            var current_longitude =
+              document.getElementById("current_longitude");
+            current_latitude.innerText = "Latitude: " + latitude;
+            current_longitude.innerText = "Longitude: " + longitude;
+            console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+            bdcApi =
+              bdcApi +
+              "?latitude=" +
+              position.coords.latitude +
+              "&longitude=" +
+              position.coords.longitude +
+              "&localityLanguage=en";
+            getApi(bdcApi);
+          },
+          (err) => {
+            getApi(bdcApi);
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0,
+          }
+        );
+      }
+      function getApi(bdcApi) {
+        Http.open("GET", bdcApi);
+        Http.send();
+        Http.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            var json_result = JSON.parse(this.responseText);
+            var current_district =
+              json_result.localityInfo.administrative[2].name;
+            var current_state = json_result.localityInfo.administrative[1].name;
+            var location = current_district + ", " + current_state;
+            current_location_name.innerText = location;
+          }
+        };
+      }
+
+      get_location_name.onclick = function get_location_name() {
+        var get_geo_code_1 = document.getElementById("current_lat_long").value;
+        var get_geo_code = get_geo_code_1.replace(" ", "");
+        var lat_long = get_geo_code.split(",");
+        var get_latitude = lat_long[0];
+        var get_longitude = lat_long[1];
+        const geocodeUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${get_latitude}&lon=${get_longitude}`;
+        fetch(geocodeUrl)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.address) {
+              const placeName = data.display_name;
+              console.log("Place Name:", placeName);
+              document.getElementById("location_name").innerText = placeName;
+            } else {
+              console.error("Reverse geocoding failed. No results found.");
+            }
+          })
+          .catch((error) => {
+            console.error("Reverse geocoding error:", error);
+          });
+      };
+
+      get_geo_cordinate.onclick = function getCoordinates(placeName) {
+        var placeName = document.getElementById("place_name").value;
+        const apiUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
+          placeName
+        )}`;
+
+        fetch(apiUrl)
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.length > 0) {
+              const { lat, lon } = data[0];
+              console.log("Latitude:", lat);
+              console.log("Longitude:", lon);
+              document.getElementById("location_geo_code").innerText =
+                "Latitude :" + lat + " Longitude: " + lon;
+            } else {
+              console.log("No results found for the place name.");
+            }
+          })
+          .catch((error) => {
+            console.log("Error:", error);
+          });
+      };
+
+      get_distance_btn.onclick = function haversine() {
+        var place_1_value = document.getElementById("palce_1").value;
+        var place_2_value = document.getElementById("palce_2").value;
+        var place_1 = place_1_value.split(",");
+        var place_2 = place_2_value.split(",");
+        var lat1 =place_1[0]; 
+        var lon1 =place_1[1]; 
+        var lat2 =place_2[0]; 
+        var lon2 =place_2[1]; 
+        const earthRadius = 6371; // Radius of the Earth in kilometers
+
+        // Convert latitude and longitude from degrees to radians
+        const dLat = toRadians(lat2 - lat1);
+        const dLon = toRadians(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  // Calculate the distance
+  const distance = earthRadius * c;
+  document.getElementById("distance").innerText = distance.toFixed(2)+" km"
+  return distance;
+}
+
+function toRadians(degrees) {
+  return degrees * (Math.PI / 180);
+}
 </script>
 </body>
 </html>
